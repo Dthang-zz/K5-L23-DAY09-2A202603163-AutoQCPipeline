@@ -16,9 +16,38 @@ Tỉ lệ cảnh báo = (số ẢNH khác nhau có ≥ 1 cảnh báo) / (tổng 
 
 Trả về dict: decision, n_errors, n_warn_images, n_images, warn_ratio (làm tròn 4 chữ số), reasons (list[str], giải thích bằng tiếng Việt, có số liệu).
 """
-from ..common import ERROR, WARN  # noqa: F401
+from collections import Counter
+
+from ..common import ERROR, WARN
 
 
 def decide(issues, image_stems, cfg, reviewed=frozenset()):
-    # TODO
-    raise NotImplementedError("gate chưa làm")
+    thr = cfg["gate"]["warn_ratio_hold"]
+    stems, reviewed = set(image_stems), set(reviewed)
+
+    # Lỗi bắt buộc: đếm TẤT CẢ (kể cả lỗi cấp dataset như data.yaml, kể cả ảnh đã duyệt) — không gì được che lỗi bắt buộc.
+    errors = [i for i in issues if i.severity == ERROR]
+    # Cảnh báo: đếm theo ẢNH, chỉ ảnh có trong dataset và CHƯA được người duyệt.
+    warn_images = {i.image for i in issues if i.severity == WARN and i.image in stems and i.image not in reviewed}
+
+    n_images = len(stems)
+    warn_ratio = round(len(warn_images) / n_images, 4) if n_images else 0.0
+
+    if errors:
+        decision = "Rework"
+        by_code = Counter(i.code for i in errors)
+        reasons = [f"còn {len(errors)} lỗi bắt buộc ("
+                   + ", ".join(f"{c}: {k}" for c, k in sorted(by_code.items())) + ") — phải sửa trước khi xuất"]
+    elif warn_ratio >= thr:
+        decision = "Hold"
+        reasons = [f"{len(warn_images)}/{n_images} ảnh ({warn_ratio:.1%}) còn cảnh báo chưa được người duyệt, "
+                   f">= ngưỡng {thr:.0%}"]
+    else:
+        decision = "Release"
+        reasons = [f"không còn lỗi bắt buộc; {len(warn_images)}/{n_images} ảnh ({warn_ratio:.1%}) còn cảnh báo chưa duyệt, "
+                   f"< ngưỡng {thr:.0%}"]
+    if decision != "Rework" and reviewed:
+        reasons.append(f"{len(reviewed & stems)} ảnh đã được người duyệt (cảnh báo của chúng coi như đã xử lý)")
+
+    return dict(decision=decision, n_errors=len(errors), n_warn_images=len(warn_images), n_images=n_images,
+                warn_ratio=warn_ratio, reasons=reasons)
