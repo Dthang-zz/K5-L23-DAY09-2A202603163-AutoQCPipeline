@@ -1,0 +1,16 @@
+# Check thêm — tỉ lệ khung hình box (work/run/ds)
+ảnh đã quét: 202
+
+box_aspect -> 7 dòng
+
+[WARN ] BOX_ASPECT_CLASS     img_0073.txt:2  box truck có rộng/cao = 0.39, lạ so với lớp truck (điển hình 1.30, z = 4.6): nhầm lớp hay box lỏng?
+[WARN ] BOX_ASPECT_CLASS     img_0140.txt:1  box truck có rộng/cao = 0.42, lạ so với lớp truck (điển hình 1.30, z = 4.3): nhầm lớp hay box lỏng?
+[WARN ] BOX_ASPECT_CLASS     img_0148.txt:1  box person có rộng/cao = 3.62, lạ so với lớp person (điển hình 0.52, z = 3.8): nhầm lớp hay box lỏng?
+[WARN ] BOX_ASPECT_CLASS     img_0159.txt:4  box person có rộng/cao = 4.81, lạ so với lớp person (điển hình 0.52, z = 4.4): nhầm lớp hay box lỏng?
+[WARN ] BOX_ASPECT_CLASS     img_0160.txt:3  box truck có rộng/cao = 3.80, lạ so với lớp truck (điển hình 1.30, z = 4.1): nhầm lớp hay box lỏng?
+[WARN ] BOX_ASPECT_EXTREME   img_0042.txt:5  box person dạng sợi chỉ: rộng/cao = 0.10 (vượt 8 lần)
+[WARN ] BOX_ASPECT_EXTREME   img_0124.txt:6  box car dạng sợi chỉ: rộng/cao = 9.11 (vượt 8 lần)
+
+## Tổng hợp theo mã
+warn  BOX_ASPECT_CLASS       5
+warn  BOX_ASPECT_EXTREME     2

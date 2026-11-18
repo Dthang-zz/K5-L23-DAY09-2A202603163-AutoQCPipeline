@@ -1,0 +1,8 @@
+check,severity,code,image,line,message,extra
+box_aspect,warn,BOX_ASPECT_EXTREME,img_0042,5,box person dạng sợi chỉ: rộng/cao = 0.10 (vượt 8 lần),"{""ratio"": 0.104}"
+box_aspect,warn,BOX_ASPECT_CLASS,img_0073,2,"box truck có rộng/cao = 0.39, lạ so với lớp truck (điển hình 1.30, z = 4.6): nhầm lớp hay box lỏng?","{""ratio"": 0.391, ""class_median"": 1.305, ""z"": 4.59}"
+box_aspect,warn,BOX_ASPECT_EXTREME,img_0124,6,box car dạng sợi chỉ: rộng/cao = 9.11 (vượt 8 lần),"{""ratio"": 9.111}"
+box_aspect,warn,BOX_ASPECT_CLASS,img_0140,1,"box truck có rộng/cao = 0.42, lạ so với lớp truck (điển hình 1.30, z = 4.3): nhầm lớp hay box lỏng?","{""ratio"": 0.422, ""class_median"": 1.305, ""z"": 4.3}"
+box_aspect,warn,BOX_ASPECT_CLASS,img_0148,1,"box person có rộng/cao = 3.62, lạ so với lớp person (điển hình 0.52, z = 3.8): nhầm lớp hay box lỏng?","{""ratio"": 3.616, ""class_median"": 0.523, ""z"": 3.8}"
+box_aspect,warn,BOX_ASPECT_CLASS,img_0159,4,"box person có rộng/cao = 4.81, lạ so với lớp person (điển hình 0.52, z = 4.4): nhầm lớp hay box lỏng?","{""ratio"": 4.809, ""class_median"": 0.523, ""z"": 4.36}"
+box_aspect,warn,BOX_ASPECT_CLASS,img_0160,3,"box truck có rộng/cao = 3.80, lạ so với lớp truck (điển hình 1.30, z = 4.1): nhầm lớp hay box lỏng?","{""ratio"": 3.803, ""class_median"": 1.305, ""z"": 4.08}"
