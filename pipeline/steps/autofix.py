@@ -85,7 +85,7 @@ def _rename_classes(ds, errs, cfg):
     data["names"] = new                                     # giữ các khoá khác (path, train, …), chỉ thay names
     if "nc" in data:
         data["nc"] = len(new)
-    ds.yaml_path.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False), encoding="utf-8")
+    ds.yaml_path.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False), encoding="utf-8", newline="\n")
     return [_rec("data.yaml", "", "rename_classes", str(old), str(new))]
 
 
@@ -121,7 +121,8 @@ def _fix_lines(ds, errs, removed):
                 continue
             fixes.append(_rec(stem, n, "clip_box", text.strip(), new))
             out.append(new)
-        p.write_text("".join(ln + "\n" for ln in out), encoding="utf-8")
+        # newline="\n": luôn ghi LF, kể cả trên Windows (mặc định đổi thành CRLF -> sha1 nhãn trong manifest khác giữa Windows và Linux)
+        p.write_text("".join(ln + "\n" for ln in out), encoding="utf-8", newline="\n")
     return fixes
 
 

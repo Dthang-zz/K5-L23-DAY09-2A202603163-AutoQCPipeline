@@ -48,7 +48,6 @@ label_format,error,BAD_FORMAT,img_0022,1,không đúng 5 cột số (giá trị 
 label_format,error,DUP_BOX,img_0024,8,"trùng box dòng 6 (cùng lớp, IoU 0.983 > 0.9)","{""of_line"": 6, ""iou"": 0.9829}"
 label_format,warn,BOX_TINY,img_0026,6,cạnh ngắn 11.4px < 12px,"{""short_px"": 11.41}"
 label_format,error,BOX_OUT_OF_IMAGE,img_0030,9,box tràn ra ngoài ảnh 0.0230 (> 0.002),"{""overflow"": 0.022998}"
-label_format,warn,BOX_TINY,img_0030,9,cạnh ngắn 9.8px < 12px,"{""short_px"": 9.81}"
 label_format,error,BOX_OUT_OF_IMAGE,img_0043,1,box tràn ra ngoài ảnh 0.0300 (> 0.002),"{""overflow"": 0.03}"
 label_format,error,BOX_ZERO,img_0050,1,"box rộng/cao bằng 0 (w=0.0, h=0.396065)",
 label_format,warn,BOX_TINY,img_0051,5,cạnh ngắn 8.9px < 12px,"{""short_px"": 8.91}"
