@@ -60,7 +60,25 @@ Người đã xem **74/103 ảnh có cảnh báo ngữ nghĩa**: `WRONG_CLASS` 1
 
 ## 5. Train: raw vs clean (tùy chọn, chấm riêng)
 
-**Chưa chạy.** Chưa có phiên Colab/GPU; ưu tiên hoàn thành phần lõi (`make check-core`). Khi train sẽ dùng notebook `notebooks/day09_train_compare.ipynb` (yolo26n, 20 epoch, 2 seed) trên export Hold hiện tại và chỉ kết luận "clean tốt hơn" nếu chênh mAP50 vượt độ lệch giữa seed.
+Colab T4, `notebooks/day09_train_compare.ipynb` → `scripts/train_compare.py`: **yolo26n**, **20 epoch**, batch 16, imgsz 640, **seed 0 và 1**, cùng val (`gold_val`, 40 ảnh) và cùng test (100 ảnh, nhãn người). `raw` = 224 ảnh nhãn gốc; `clean` = 202 ảnh của export **Hold** (bản nháp, `manifest_sha1` 882dadf… khớp export hiện tại). Bảng từ `submission/results/comparison.md`:
+
+| biến thể | #ảnh train | số seed | mAP50 (TB ± độ lệch) | mAP50-95      | precision     | recall        |
+| -------- | ---------- | ------- | -------------------- | ------------- | ------------- | ------------- |
+| raw      | 224        | 2       | 0.726 ± 0.000        | 0.512 ± 0.004 | 0.764 ± 0.061 | 0.649 ± 0.028 |
+| clean    | 202        | 2       | 0.701 ± 0.025        | 0.487 ± 0.008 | 0.759 ± 0.003 | 0.625 ± 0.019 |
+
+AP50 theo lớp (TB 2 seed, từ `*_seed*.json`): car 0,738 → 0,738 · person 0,822 → 0,823 · bus 0,695 → 0,703 · **truck 0,648 → 0,538 (−0,11)**.
+
+**So với nhiễu:** chênh mAP50 (clean − raw) = **−0,025**, đúng bằng độ lệch giữa 2 seed của `clean` (0,025; hai seed 0,718 và 0,683). Với 2 seed, khác biệt **nằm trong nhiễu**: **chưa kết luận được** clean tốt hơn hay kém hơn raw. mAP50-95 giảm 0,024, lớn hơn độ lệch seed (0,004–0,008), nên có **dấu hiệu** clean hơi kém, nhưng 2 seed và 100 ảnh test không đủ để khẳng định. Chắc chắn một điều: **clean không tốt hơn raw** trong thí nghiệm này. Gần như toàn bộ chênh lệch đến từ **truck**: ba lớp còn lại lệch ≤ 0,01.
+
+**Giả thuyết và cách kiểm:**
+
+1. **Lớp truck quá ít nên rất nhiễu.** Test chỉ có 24 box truck, train `clean` 41 box (raw 32): một box truck đoán đúng/sai đổi AP truck vài điểm. Bằng chứng: riêng `clean`, AP truck giữa 2 seed đã chênh 0,10 (0,590 và 0,486). _Kiểm:_ chạy thêm 3–5 seed và báo độ lệch theo lớp; hoặc gộp truck/bus/car để xem phần còn lại có đổi không.
+2. **Nhãn car/truck/bus trong clean vẫn lẫn.** Chỉ 80/202 ảnh được người duyệt; 122 ảnh còn nhãn máy. Người đã đổi lớp qua lại car↔truck↔bus ở các ảnh duyệt (`img_0078`, `img_0220`: car→truck; `img_0024`, `img_0124`: truck→car; `img_0083`, `img_0160`: bus→truck), nên trong clean một số "truck" là nhãn người, số khác là nhãn máy: lớp truck bị huấn luyện với hai tiêu chuẩn. _Kiểm:_ train biến thể chỉ gồm 80 ảnh đã duyệt (hoặc biến thể `oracle` của notebook) và so AP truck.
+3. **Rò rỉ test làm `raw` được thổi phồng.** Pipeline phát hiện 5 ảnh `raw` trùng ảnh test (`LEAK_TEST`: `img_0049`~`test_033`, `img_0101`~`test_039`, `img_0167`~`test_044`, `img_0174`~`test_085`, `img_0221`~`test_009`): `raw` đã thấy 5% tập test khi train, `clean` thì không. Nhưng 5 ảnh test này chỉ có 1/24 box truck (`test_085`), nên rò rỉ giải thích được một phần nhỏ chênh mAP chung, **không** giải thích được việc truck giảm 0,11. _Kiểm:_ đánh giá lại cả hai model trên 95 ảnh test còn lại (bỏ 5 ảnh rò rỉ).
+4. **Clean ít ảnh hơn** (202 so với 224, bỏ 12 ảnh trùng + 5 ảnh rò rỉ + 5 ảnh hỏng/nhỏ). Ultralytics tự bỏ ảnh hỏng và dòng nhãn lỗi của `raw` khi load, nên số ảnh `raw` thực sự dùng < 224. _Kiểm:_ đọc cảnh báo Ultralytics ở ô train của notebook để biết số ảnh/nhãn `raw` bị bỏ.
+
+**Việc tiếp theo:** thêm seed (≥ 5) trước khi kết luận; đánh giá trên test bỏ 5 ảnh rò rỉ; duyệt hết 38 ảnh còn cảnh báo (để export thành Release) rồi train lại; ưu tiên duyệt các ảnh có truck/bus vì đây là lớp nhạy nhất.
 
 ## 6. Quyết định và ghi chú AI
 
@@ -68,7 +86,7 @@ Người đã xem **74/103 ảnh có cảnh báo ngữ nghĩa**: `WRONG_CLASS` 1
 
 **(b) Dùng AI: có** (Claude Code).
 
-- _Prompt chính:_ "phân tích dữ liệu và viết 4 module"; AI đọc docstring + test của từng module (đầu vào/đầu ra, quy tắc, ca biên, lệnh test) rồi viết `label_format` → `gate` → `autofix` → `second_opinion`, chạy pytest sau mỗi module.
+- _Prompt chính:_ "phân tích dữ liệu các labeling và viết 4 module"; AI đọc docstring + test của từng module (đầu vào/đầu ra, quy tắc, ca biên, lệnh test) rồi viết `label_format` → `gate` → `autofix` → `second_opinion`, chạy pytest sau mỗi module.
 - _Cách kiểm:_ `pytest` 79/79; thêm 5 ca biên tự viết (dòng dính 2 lỗi + dòng trống, clip rồi chạy lại phải idempotent, ảnh nhiều dự đoán, lỗi `data.yaml` → Rework, `data.yaml` hỏng cú pháp); đối chiếu `03_fixes.csv` với số lỗi v1 (20 + 8 + 6 + 1 = 35); mở xem bằng mắt các cặp ảnh bị coi là trùng.
 - _Một lần AI sai:_ bản đầu của `autofix._rename_classes` gọi lại `ds.yaml_names()`, hàm này ném lỗi nếu `data.yaml` hỏng cú pháp → pipeline chết. Test đề không bắt được; phát hiện khi đọc lại code, sửa thành đọc YAML một lần trong `try/except` và dựng lại `names`.
 
