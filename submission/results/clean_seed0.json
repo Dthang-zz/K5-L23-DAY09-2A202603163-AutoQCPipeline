@@ -14,10 +14,10 @@
     "truck": 0.5898,
     "bus": 0.7258
   },
-  "manifest_sha1": "882dadf0fc85735977ee6fa090e7c88ccfdcd448",
+  "manifest_sha1": "322d0760d7f894818dae68206b62cfbeb55655b5",
   "config_sha1": "58d1755c0bdeff79633a6922dc2a1518c9d8b6d0",
   "batch": 16,
   "imgsz": 640,
   "train_images": 202,
-  "seconds": 88.1
+  "seconds": 91.1
 }

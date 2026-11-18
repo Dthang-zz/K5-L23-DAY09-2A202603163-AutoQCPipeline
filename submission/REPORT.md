@@ -60,7 +60,7 @@ Người đã xem **74/103 ảnh có cảnh báo ngữ nghĩa**: `WRONG_CLASS` 1
 
 ## 5. Train: raw vs clean (tùy chọn, chấm riêng)
 
-Colab T4, `notebooks/day09_train_compare.ipynb` → `scripts/train_compare.py`: **yolo26n**, **20 epoch**, batch 16, imgsz 640, **seed 0 và 1**, cùng val (`gold_val`, 40 ảnh) và cùng test (100 ảnh, nhãn người). `raw` = 224 ảnh nhãn gốc; `clean` = 202 ảnh của export **Hold** (bản nháp, `manifest_sha1` 882dadf… khớp export hiện tại). Bảng từ `submission/results/comparison.md`:
+Colab T4, `notebooks/day09_train_compare.ipynb` → `scripts/train_compare.py`: **yolo26n**, **20 epoch**, batch 16, imgsz 640, **seed 0 và 1**, cùng val (`gold_val`, 40 ảnh) và cùng test (100 ảnh, nhãn người). `raw` = 224 ảnh nhãn gốc; `clean` = 202 ảnh của export **Hold** (bản nháp, `manifest_sha1` 322d0760… khớp export hiện tại; đây là lần train lại sau khi sửa lỗi CRLF ở §6b — mọi chỉ số trùng khớp tới 4 chữ số với lần train trước trên `manifest` cũ 882dadf…, xác nhận nội dung nhãn không đổi). Bảng từ `submission/results/comparison.md`:
 
 | biến thể | #ảnh train | số seed | mAP50 (TB ± độ lệch) | mAP50-95      | precision     | recall        |
 | -------- | ---------- | ------- | -------------------- | ------------- | ------------- | ------------- |
